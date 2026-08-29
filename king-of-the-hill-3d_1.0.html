@@ -35,6 +35,9 @@
   .opt-btn.active{background:var(--olive-dim);border-color:var(--amber);color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber);}
   .opt-btn small{display:block;color:var(--text-dim);font-size:9.5px;margin-top:3px;}
   .opt-btn.active small{color:var(--amber-dim);}
+  .text-input{width:100%;background:var(--panel-2);border:1px solid var(--olive-dim);color:var(--text);padding:11px 12px;font-family:inherit;font-size:13px;letter-spacing:0.12em;}
+  .text-input:focus{outline:none;border-color:var(--amber);}
+  .net-error{color:var(--red);font-size:11.5px;line-height:1.5;margin-top:10px;letter-spacing:0.04em;}
   #startBtn{width:100%;margin-top:6px;padding:16px;background:var(--amber);border:none;color:#1a1206;font-family:'Arial Black',Impact,sans-serif;font-size:17px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;}
   #startBtn:hover{background:#ffc250;}
   .controls-hint{margin-top:14px;font-size:10.5px;color:var(--text-dim);text-align:center;line-height:1.8;}
@@ -113,6 +116,24 @@
   #resumeBtn{width:100%;padding:12px;background:var(--amber);border:none;color:#1a1206;font-family:'Arial Black',Impact,sans-serif;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;margin-top:6px;}
   #resumeBtn:hover{background:#ffc250;}
 
+  /* LOBBY */
+  #lobbyScreen{width:min(520px,92vw);background:linear-gradient(180deg,var(--panel) 0%,#0d120e 100%);border:1px solid var(--olive-dim);box-shadow:0 0 0 1px #000,0 20px 60px rgba(0,0,0,0.6);padding:32px 34px 28px;position:relative;}
+  #lobbyScreen::before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,176,32,0.15);pointer-events:none;}
+  #roomCode{font-family:'Arial Black',Impact,sans-serif;font-size:42px;letter-spacing:0.25em;color:var(--amber);text-align:center;margin:10px 0 2px;}
+  .lobby-hint{color:var(--text-dim);font-size:11.5px;text-align:center;line-height:1.7;margin-bottom:20px;}
+  #lobbyCount{color:var(--amber);font-size:10.5px;letter-spacing:0.2em;font-weight:700;margin-bottom:8px;}
+  #playerList{border:1px solid var(--olive-dim);background:var(--panel-2);padding:6px 12px;margin-bottom:16px;min-height:44px;}
+  .pl-row{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:12.5px;color:var(--text);}
+  .pl-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+  .pl-tag{margin-left:auto;color:var(--amber);font-size:9.5px;letter-spacing:0.18em;}
+  #lobbyStartBtn{width:100%;padding:14px;background:var(--amber);border:none;color:#1a1206;font-family:'Arial Black',Impact,sans-serif;font-size:15px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;}
+  #lobbyStartBtn:hover:enabled{background:#ffc250;}
+  #lobbyStartBtn:disabled{background:var(--olive-dim);color:var(--text-dim);cursor:default;}
+  #lobbyWait{text-align:center;color:var(--text-dim);font-size:12px;padding:13px 0;letter-spacing:0.08em;}
+  #lobbyCancelBtn{width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--olive-dim);color:var(--text-dim);font-family:inherit;font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;}
+  #lobbyCancelBtn:hover{border-color:var(--amber-dim);color:var(--text);}
+  .lobby-warn{margin-top:14px;font-size:10.5px;color:var(--text-dim);text-align:center;line-height:1.7;}
+
   /* GAME OVER */
   #gameOverScreen{width:min(520px,92vw);background:linear-gradient(180deg,var(--panel) 0%,#0d120e 100%);border:1px solid var(--olive-dim);padding:36px 34px;text-align:center;}
   #gameOverScreen h2{font-family:'Arial Black',Impact,sans-serif;font-size:32px;letter-spacing:0.05em;margin-bottom:6px;text-transform:uppercase;}
@@ -139,6 +160,22 @@
     </div>
 
     <div class="setup-row">
+      <label>MODALITÀ</label>
+      <div class="opt-group" id="modeOpts">
+        <button class="opt-btn active" data-mode="single">Single player<small>contro i bot</small></button>
+        <button class="opt-btn" data-mode="host">Hosta partita<small>crea una stanza</small></button>
+        <button class="opt-btn" data-mode="join">Entra con codice<small>partita di un amico</small></button>
+      </div>
+    </div>
+    <div class="setup-row hidden" id="nameRow">
+      <label>NOME GIOCATORE</label>
+      <input class="text-input" id="nameInput" maxlength="12" placeholder="Il tuo nome" autocomplete="off">
+    </div>
+    <div class="setup-row hidden" id="codeRow">
+      <label>CODICE STANZA</label>
+      <input class="text-input" id="codeInput" maxlength="4" placeholder="XXXX" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="setup-row">
       <label>ARMA DI PARTENZA</label>
       <div class="opt-group" id="weaponOpts">
         <button class="opt-btn active" data-weapon="AK47">AK-47<small>alto danno, cadenza media</small></button>
@@ -146,7 +183,7 @@
         <button class="opt-btn" data-weapon="SNIPER">CECCHINO<small>precisione, mirino zoom</small></button>
       </div>
     </div>
-    <div class="setup-row">
+    <div class="setup-row" id="botRow">
       <label>NEMICI SUL CAMPO</label>
       <div class="opt-group" id="botOpts">
         <button class="opt-btn" data-bots="3">3 nemici</button>
@@ -154,7 +191,7 @@
         <button class="opt-btn" data-bots="7">7 nemici</button>
       </div>
     </div>
-    <div class="setup-row">
+    <div class="setup-row" id="diffRow">
       <label>DIFFICOLTÀ</label>
       <div class="opt-group" id="diffOpts">
         <button class="opt-btn" data-diff="easy">Recluta</button>
@@ -162,7 +199,7 @@
         <button class="opt-btn" data-diff="hard">Élite</button>
       </div>
     </div>
-    <div class="setup-row">
+    <div class="setup-row" id="scoreRow">
       <label>PUNTI PER VINCERE</label>
       <div class="opt-group" id="scoreOpts">
         <button class="opt-btn" data-score="30">30</button>
@@ -172,6 +209,7 @@
     </div>
 
     <button id="startBtn">Entra in campo</button>
+    <div class="net-error" id="startError"></div>
     <div class="controls-hint">
       <b>WASD</b> movimento &nbsp;·&nbsp; <b>mouse</b> mira (clicca per attivare) &nbsp;·&nbsp; <b>tasti freccia</b> mira alternativa<br>
       <b>click sinistro / SPAZIO</b> spara &nbsp;·&nbsp; <b>click destro</b> mira di precisione &nbsp;·&nbsp; <b>R</b> ricarica &nbsp;·&nbsp; <b>1 2 3</b> cambia arma &nbsp;·&nbsp; <b>ESC</b> menu
@@ -227,6 +265,19 @@
     </div>
   </div>
 
+  <div id="lobbyScreen" class="hidden">
+    <div class="eyebrow">STANZA // IN ATTESA</div>
+    <div id="roomCode">----</div>
+    <div class="lobby-hint">Condividi questo codice con chi vuoi in partita</div>
+    <div id="lobbyCount">GIOCATORI 1/8</div>
+    <div id="playerList"></div>
+    <button id="lobbyStartBtn">Inizia partita</button>
+    <div id="lobbyWait" class="hidden">In attesa che l'host avvii la partita...</div>
+    <button id="lobbyCancelBtn">Annulla</button>
+    <div class="lobby-warn" id="lobbyWarn">Host: tieni questa scheda in primo piano durante la partita, il browser rallenta le schede in secondo piano.</div>
+    <div class="net-error" id="lobbyError"></div>
+  </div>
+
   <div id="gameOverScreen" class="hidden">
     <h2 id="goTitle">VITTORIA</h2>
     <div id="finalStats"></div>
@@ -236,6 +287,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -243,7 +295,10 @@
 // ======================================================================
 // CONFIG
 // ======================================================================
-let cfg = { startWeapon:"AK47", botCount:5, difficulty:"normal", scoreLimit:50 };
+let cfg = { mode:"single", startWeapon:"AK47", botCount:5, difficulty:"normal", scoreLimit:50 };
+let playerName = "";
+// null in single player: ogni ramo di rete parte da qui
+let net = null;
 
 const EYE_HEIGHT = 1.7;
 const BODY_R = 0.42;
@@ -293,7 +348,7 @@ const BOT_COLORS = [0xd95f5f,0x5f9bd9,0xd9c15f,0x9b5fd9,0x5fd9a3,0xd98a5f,0xd95f
 // ======================================================================
 // UI WIRING (start screen)
 // ======================================================================
-function wireOptGroup(id, dataAttr, cfgKey, cast){
+function wireOptGroup(id, dataAttr, cfgKey, cast, onChange){
   const group = document.getElementById(id);
   group.querySelectorAll(".opt-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -301,25 +356,67 @@ function wireOptGroup(id, dataAttr, cfgKey, cast){
       btn.classList.add("active");
       const v = btn.getAttribute(dataAttr);
       cfg[cfgKey] = cast ? cast(v) : v;
+      if(onChange) onChange();
     });
   });
 }
+wireOptGroup("modeOpts","data-mode","mode", null, updateModeUI);
 wireOptGroup("weaponOpts","data-weapon","startWeapon");
 wireOptGroup("botOpts","data-bots","botCount", v=>parseInt(v,10));
 wireOptGroup("diffOpts","data-diff","difficulty");
 wireOptGroup("scoreOpts","data-score","scoreLimit", v=>parseInt(v,10));
 
-document.getElementById("startBtn").addEventListener("click", startGame);
+function updateModeUI(){
+  const m = cfg.mode;
+  document.getElementById("nameRow").classList.toggle("hidden", m === "single");
+  document.getElementById("codeRow").classList.toggle("hidden", m !== "join");
+  document.getElementById("botRow").classList.toggle("hidden", m !== "single");
+  document.getElementById("diffRow").classList.toggle("hidden", m !== "single");
+  document.getElementById("scoreRow").classList.toggle("hidden", m === "join");
+  document.getElementById("startBtn").textContent = startBtnLabel();
+  document.getElementById("startError").textContent = "";
+}
+function startBtnLabel(){
+  return cfg.mode === "host" ? "Crea stanza" : cfg.mode === "join" ? "Connetti" : "Entra in campo";
+}
+
+const codeInput = document.getElementById("codeInput");
+codeInput.addEventListener("input", ()=>{
+  codeInput.value = codeInput.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, "");
+});
+
+document.getElementById("startBtn").addEventListener("click", onStartClick);
+document.getElementById("lobbyStartBtn").addEventListener("click", ()=>{ if(isHost()) startGame(); });
+document.getElementById("lobbyCancelBtn").addEventListener("click", ()=>backToStart(""));
 document.getElementById("restartBtn").addEventListener("click", ()=>{
   document.getElementById("gameOverScreen").classList.add("hidden");
   document.getElementById("startScreen").classList.remove("hidden");
 });
 
+function onStartClick(){
+  const err = document.getElementById("startError");
+  err.textContent = "";
+  if(cfg.mode === "single"){ startGame(); return; }
+  playerName = (document.getElementById("nameInput").value || "").trim().slice(0,12);
+  if(!playerName) playerName = "Giocatore"+Math.floor(10+Math.random()*90);
+  document.getElementById("nameInput").value = playerName;
+  saveSettings();
+  const btn = document.getElementById("startBtn");
+  if(cfg.mode === "host"){
+    btn.disabled = true; btn.textContent = "Connessione...";
+    netHost();
+    return;
+  }
+  const code = codeInput.value.trim().toUpperCase();
+  if(code.length !== 4){ err.textContent = "Inserisci il codice a 4 caratteri della stanza"; return; }
+  btn.disabled = true; btn.textContent = "Connessione...";
+  netJoin(code);
+}
+
 // ======================================================================
 // THREE.JS SETUP
 // ======================================================================
 let renderer, scene, camera;
-let clock;
 const canvas = document.getElementById("canvas");
 
 function initThree(){
@@ -460,8 +557,9 @@ try{
   const s = JSON.parse(localStorage.getItem("koth_settings")||"{}");
   if(typeof s.vol === "number") sfxVolume = s.vol;
   if(typeof s.sens === "number") mouseSens = s.sens;
+  if(typeof s.name === "string"){ playerName = s.name.slice(0,12); document.getElementById("nameInput").value = playerName; }
 }catch(e){}
-function saveSettings(){ try{ localStorage.setItem("koth_settings", JSON.stringify({vol:sfxVolume, sens:mouseSens})); }catch(e){} }
+function saveSettings(){ try{ localStorage.setItem("koth_settings", JSON.stringify({vol:sfxVolume, sens:mouseSens, name:playerName})); }catch(e){} }
 
 let audioCtx = null, masterGain = null, noiseBuf = null, voices = 0;
 function initAudio(){
@@ -586,11 +684,13 @@ function makeHitMeshes(color, forBot){
   return {bodyMesh, headMesh};
 }
 
-function makeEntity(isPlayer, idx){
-  const spawn = SPAWNS[Math.floor(Math.random()*SPAWNS.length)];
+function makeEntity(isPlayer, idx, opts){
+  opts = opts || {};
+  const spawn = typeof opts.spawnIdx === "number" ? SPAWNS[opts.spawnIdx % SPAWNS.length] : SPAWNS[Math.floor(Math.random()*SPAWNS.length)];
   const weaponKeys = Object.keys(WEAPONS);
-  const startW = isPlayer ? cfg.startWeapon : weaponKeys[Math.floor(Math.random()*weaponKeys.length)];
-  const color = isPlayer ? 0x5ee1ff : BOT_COLORS[idx % BOT_COLORS.length];
+  const startW = opts.weapon || (isPlayer ? cfg.startWeapon : weaponKeys[Math.floor(Math.random()*weaponKeys.length)]);
+  const colorIdx = typeof opts.colorIdx === "number" ? opts.colorIdx : idx;
+  const color = isPlayer ? 0x5ee1ff : BOT_COLORS[colorIdx % BOT_COLORS.length];
 
   const group = new THREE.Group();
   const {bodyMesh, headMesh} = makeHitMeshes(color, !isPlayer);
@@ -608,12 +708,14 @@ function makeEntity(isPlayer, idx){
   scene.add(group);
 
   const ent = {
-    id: isPlayer ? "player" : "bot"+idx,
+    id: opts.id || (isPlayer ? "player" : "bot"+idx),
     isPlayer,
-    name: isPlayer ? "TU" : BOT_NAMES[idx % BOT_NAMES.length],
+    isRemote: !!opts.remote,
+    buf: [],
+    name: opts.name || (isPlayer ? "TU" : BOT_NAMES[idx % BOT_NAMES.length]),
     color,
-    x: spawn.x, z: spawn.z,
-    hp: 100, alive: true,
+    x: spawn.x, z: spawn.z, yaw: 0,
+    hp: 100, alive: true, deathAnnounced: false,
     weapons: {},
     weapon: startW,
     reloading:false, reloadUntil:0, lastShot:0,
@@ -624,7 +726,7 @@ function makeEntity(isPlayer, idx){
     reactionDelay: cfg.difficulty==="hard"?200:cfg.difficulty==="normal"?420:700,
     accuracyMod: cfg.difficulty==="hard"?0.9:cfg.difficulty==="normal"?1.6:2.6,
     headBias: cfg.difficulty==="hard"?0.38:cfg.difficulty==="normal"?0.18:0.05,
-    dmgMult: cfg.difficulty==="hard"?1:cfg.difficulty==="normal"?0.7:0.45,
+    dmgMult: net ? 1 : (cfg.difficulty==="hard"?1:cfg.difficulty==="normal"?0.7:0.45),
     strafeDir: idx%2===0?1:-1
   };
   bodyMesh.userData = {entityId: ent.id, part:"body"};
@@ -641,6 +743,16 @@ function entityById(id){ return entities.find(e=>e.id===id); }
 function resetEntities(){
   for(const e of entities) scene.remove(e.group);
   entities = [];
+  if(net){
+    const myId = net.myId;
+    for(const r of net.roster){
+      const mine = r.id === myId;
+      entities.push(makeEntity(mine, r.colorIdx, {
+        id:r.id, name:r.name, colorIdx:r.colorIdx, spawnIdx:r.spawnIdx, weapon:r.weapon, remote:!mine
+      }));
+    }
+    return;
+  }
   entities.push(makeEntity(true, 0));
   for(let i=0;i<cfg.botCount;i++) entities.push(makeEntity(false, i));
 }
@@ -712,7 +824,8 @@ function doRaycastShot(shooter, origin, dir, weaponKey){
     const target = entityById(hit.object.userData.entityId);
     if(!target || !target.alive) return;
     const isHead = hit.object.userData.part === "head";
-    applyDamage(shooter, target, isHead ? 9999 : Math.round(w.bodyDamage*(shooter.dmgMult||1)), isHead);
+    if(isClient()) netSend({t:"hit", target:target.id, head:isHead});
+    else applyDamage(shooter, target, isHead ? 9999 : Math.round(w.bodyDamage*(shooter.dmgMult||1)), isHead);
     if(shooter.isPlayer){ showHitmarker(isHead); playHitmarker(isHead); }
   }
 }
@@ -739,6 +852,7 @@ function fireWeapon(shooter, origin, forwardDir, now){
   dir.add(right.multiplyScalar(rx)).add(up2.multiplyScalar(ry)).normalize();
 
   doRaycastShot(shooter, origin, dir, shooter.weapon);
+  if(net && shooter.isPlayer) netSendFire(origin, dir, shooter.weapon);
 
   if(!shooter.isPlayer) radarPings[shooter.id] = {x:shooter.x, z:shooter.z, until: now+1500};
   playShot(shooter.weapon, shooter.isPlayer ? null : {x:shooter.x, y:1.5, z:shooter.z});
@@ -756,6 +870,7 @@ function tryReload(ent, now){
   ent.reloading = true;
   ent.reloadUntil = now + w.reload;
   playReload(ent.isPlayer ? null : {x:ent.x, y:1.4, z:ent.z});
+  if(net && ent.isPlayer){ if(isHost()) broadcast({t:"reload", id:net.myId}); else netSend({t:"reload"}); }
 }
 
 function finishReload(ent){
@@ -768,7 +883,7 @@ function finishReload(ent){
 }
 
 function applyDamage(shooter, target, dmg, isHeadshot){
-  if(!target.alive) return;
+  if(!isAuthority() || !target.alive) return;
   target.hp -= dmg;
   if(target.isPlayer) flashDamageVignette();
   if(target.hp <= 0){
@@ -781,19 +896,501 @@ function applyDamage(shooter, target, dmg, isHeadshot){
     pushKillfeed(shooter, target, isHeadshot);
     playDeath(target.isPlayer ? null : {x:target.x, y:1.2, z:target.z});
     if(hillController === target.id) hillController = null;
+    if(isHost()) broadcast({t:"death", killer:shooter.id, victim:target.id, head:!!isHeadshot});
   }
 }
 
-function pushKillfeed(killer, victim, headshot){
+function pushFeedItem(html){
   const el = document.createElement("div");
   el.className = "kf-item";
-  el.innerHTML = `${escapeHtml(killer.name)} <span style="color:${headshot?'#ff4d4d':'#ffb020'}">${headshot?'✕ HEADSHOT ✕':'—'}</span> ${escapeHtml(victim.name)}`;
+  el.innerHTML = html;
   const feed = document.getElementById("killfeed");
   feed.prepend(el);
   while(feed.children.length > killfeedLimit) feed.removeChild(feed.lastChild);
   setTimeout(()=>{ if(el.parentNode) el.remove(); }, 4500);
 }
+
+function pushKillfeed(killer, victim, headshot){
+  pushFeedItem(`${escapeHtml(killer.name)} <span style="color:${headshot?'#ff4d4d':'#ffb020'}">${headshot?'✕ HEADSHOT ✕':'—'}</span> ${escapeHtml(victim.name)}`);
+}
 function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+// ======================================================================
+// NET (P2P via PeerJS, host autoritativo; net === null resta single player)
+// ======================================================================
+const NET_MAX_PLAYERS = 8;
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const STATE_INTERVAL = 50;
+const SNAP_INTERVAL = 66;
+const INTERP_DELAY = 110;
+const NET_TIMEOUT = 10000;
+
+function isHost(){ return !!net && net.role === "host"; }
+function isClient(){ return !!net && net.role === "client"; }
+function isAuthority(){ return !net || net.role === "host"; }
+
+// il codice si mostra sempre maiuscolo, il peer id e sempre minuscolo
+function makeRoomCode(){
+  let s = "";
+  for(let i=0;i<4;i++) s += CODE_ALPHABET[Math.floor(Math.random()*CODE_ALPHABET.length)];
+  return s;
+}
+function peerIdFromCode(code){ return "koth-"+code.toLowerCase(); }
+
+// hasOwnProperty: una chiave come "constructor" passerebbe il test con l'indice diretto
+function validWeapon(k){ return Object.prototype.hasOwnProperty.call(WEAPONS, k) ? k : null; }
+
+function sanitizeName(n){
+  const s = (typeof n === "string" ? n : "").replace(/\s+/g, " ").trim().slice(0,12);
+  return s || "Giocatore";
+}
+// il roster arriva dal browser dell'host: normalizzalo prima di costruirci le entita
+function sanitizeRoster(list){
+  if(!Array.isArray(list)) return [];
+  return list.slice(0, NET_MAX_PLAYERS).map((r,i)=>({
+    id: r && typeof r.id === "string" ? r.id.slice(0,4) : "p"+i,
+    name: sanitizeName(r && r.name),
+    colorIdx: r && typeof r.colorIdx === "number" ? Math.abs(r.colorIdx|0) : i,
+    spawnIdx: r && typeof r.spawnIdx === "number" ? Math.abs(r.spawnIdx|0) : i,
+    weapon: (r && validWeapon(r.weapon)) || "AK47",
+    host: !!(r && r.host)
+  }));
+}
+// ogni uscita dal tentativo di connessione riabilita il bottone
+function startError(msg){
+  const btn = document.getElementById("startBtn");
+  btn.disabled = false;
+  btn.textContent = startBtnLabel();
+  document.getElementById("startError").textContent = msg;
+}
+function backToStart(msg){
+  netTeardown();
+  document.getElementById("lobbyScreen").classList.add("hidden");
+  document.getElementById("startScreen").classList.remove("hidden");
+  startError(msg || "");
+}
+
+function netHost(){
+  netTeardown();
+  if(typeof Peer === "undefined"){ startError("Server di matchmaking non raggiungibile"); return; }
+  const code = makeRoomCode();
+  let peer;
+  try{ peer = new Peer(peerIdFromCode(code), {debug:0}); }
+  catch(e){ startError("Server di matchmaking non raggiungibile"); return; }
+  net = {
+    role:"host", peer, conns:[], code, myId:"p0", started:false, nextSnap:0,
+    roster:[{id:"p0", name:playerName, colorIdx:0, spawnIdx:0, weapon:cfg.startWeapon, host:true}]
+  };
+  const mine = net;
+  let settled = false;
+  const timer = setTimeout(()=>{
+    if(settled || net !== mine) return;
+    settled = true;
+    backToStart("Server di matchmaking non raggiungibile, riprova tra qualche secondo");
+  }, NET_TIMEOUT);
+  peer.on("open", ()=>{
+    if(settled || net !== mine) return;
+    settled = true; clearTimeout(timer);
+    showLobby();
+  });
+  peer.on("connection", conn=>{
+    conn.on("data", m=>onHostMessage(conn, m));
+    conn.on("close", ()=>onClientGone(conn));
+    conn.on("error", ()=>onClientGone(conn));
+  });
+  peer.on("error", err=>{
+    if(net !== mine || settled) return;
+    settled = true; clearTimeout(timer);
+    backToStart(err && err.type === "unavailable-id"
+      ? "Codice stanza già in uso, riprova"
+      : "Server di matchmaking non raggiungibile");
+  });
+}
+
+function netJoin(code){
+  netTeardown();
+  if(typeof Peer === "undefined"){ startError("Server di matchmaking non raggiungibile"); return; }
+  let peer;
+  try{ peer = new Peer({debug:0}); }
+  catch(e){ startError("Server di matchmaking non raggiungibile"); return; }
+  net = { role:"client", peer, conn:null, code, myId:null, roster:[], started:false, nextState:0 };
+  const mine = net;
+  let settled = false;
+  function fail(msg){
+    if(settled || net !== mine) return;
+    settled = true; clearTimeout(timer);
+    backToStart(msg);
+  }
+  const timer = setTimeout(()=>{
+    fail("Connessione non riuscita: le vostre reti potrebbero bloccare il P2P, prova con l'hotspot del telefono");
+  }, NET_TIMEOUT);
+  peer.on("open", ()=>{
+    if(net !== mine) return;
+    const conn = peer.connect(peerIdFromCode(code), {reliable:true});
+    net.conn = conn;
+    conn.on("open", ()=>{
+      if(settled || net !== mine) return;
+      settled = true; clearTimeout(timer);
+      conn.send({t:"hello", name:playerName, weapon:cfg.startWeapon});
+      showLobby();
+    });
+    conn.on("data", onClientMessage);
+    conn.on("close", onHostGone);
+    conn.on("error", ()=>fail("Connessione con l'host non riuscita"));
+  });
+  peer.on("error", err=>{
+    if(err && err.type === "peer-unavailable") fail("Stanza non trovata");
+    else fail("Server di matchmaking non raggiungibile");
+  });
+}
+
+function netSend(msg){ if(net && net.conn && net.conn.open) net.conn.send(msg); }
+function broadcast(msg){ if(net && net.conns) for(const c of net.conns) if(c.open) c.send(msg); }
+function relay(from, msg){ if(net && net.conns) for(const c of net.conns) if(c !== from && c.open) c.send(msg); }
+
+function nextFreeSlot(){
+  for(let i=0;i<NET_MAX_PLAYERS;i++) if(!net.roster.some(r=>r.id === "p"+i)) return i;
+  return -1;
+}
+
+function onHostMessage(conn, m){
+  if(!m || !isHost()) return;
+  if(net.over && m.t !== "hello") return;
+  if(m.t === "hello"){
+    if(conn.playerId) return;
+    const slot = net.started ? -1 : nextFreeSlot();
+    if(slot < 0){
+      conn.send({t:"reject", reason: net.started ? "Partita già in corso" : "Stanza piena"});
+      setTimeout(()=>{ try{ conn.close(); }catch(e){} }, 400);
+      return;
+    }
+    conn.playerId = "p"+slot;
+    net.conns.push(conn);
+    net.roster.push({
+      id:conn.playerId, name:sanitizeName(m.name), colorIdx:slot, spawnIdx:slot,
+      weapon: validWeapon(m.weapon) || "AK47", host:false
+    });
+    conn.send({t:"welcome", id:conn.playerId, roster:net.roster});
+    broadcast({t:"lobby", roster:net.roster});
+    renderLobby();
+    return;
+  }
+  const ent = conn.playerId ? entityById(conn.playerId) : null;
+  if(m.t === "state"){
+    // niente sample da entita morte: un pacchetto stantio riporterebbe indietro chi e appena rinato
+    if(!ent || !ent.alive) return;
+    const wk = validWeapon(m.weapon);
+    if(wk) ent.weapon = wk;
+    pushSample(ent, m);
+    return;
+  }
+  if(m.t === "fire"){
+    if(ent) remoteFire(ent, m);
+    relay(conn, {t:"fire", id:conn.playerId, ox:m.ox, oy:m.oy, oz:m.oz, dx:m.dx, dy:m.dy, dz:m.dz, weapon:m.weapon});
+    return;
+  }
+  if(m.t === "hit"){
+    const target = entityById(m.target);
+    const w = WEAPONS[validWeapon(ent && ent.weapon) || "AK47"];
+    if(ent && ent.alive && target) applyDamage(ent, target, m.head ? 9999 : w.bodyDamage, !!m.head);
+    return;
+  }
+  if(m.t === "reload"){
+    if(ent) playReload({x:ent.x, y:1.4, z:ent.z});
+    relay(conn, {t:"reload", id:conn.playerId});
+  }
+}
+
+function onClientGone(conn){
+  if(!isHost() || !conn.playerId) return;
+  const id = conn.playerId;
+  conn.playerId = null;
+  net.conns = net.conns.filter(c=>c !== conn);
+  const i = net.roster.findIndex(r=>r.id === id);
+  const name = i >= 0 ? net.roster[i].name : "";
+  if(i >= 0) net.roster.splice(i,1);
+  if(net.started){
+    removeRemoteEntity(id);
+    broadcast({t:"leave", id, name});
+    if(name) pushFeedItem(escapeHtml(name)+" ha lasciato la partita");
+  } else {
+    broadcast({t:"lobby", roster:net.roster});
+    renderLobby();
+  }
+}
+
+function onHostGone(){
+  if(!isClient()) return;
+  if(net.started) hostLeftGameOver();
+  else backToStart("L'host ha chiuso la stanza");
+}
+
+function onClientMessage(m){
+  if(!m || !isClient()) return;
+  switch(m.t){
+    case "welcome":
+      net.myId = typeof m.id === "string" ? m.id : null;
+      net.roster = sanitizeRoster(m.roster);
+      renderLobby();
+      break;
+    case "lobby":
+      net.roster = sanitizeRoster(m.roster);
+      renderLobby();
+      break;
+    case "reject":
+      backToStart(typeof m.reason === "string" ? m.reason.slice(0,60) : "Accesso alla stanza rifiutato");
+      break;
+    case "start":
+      if(net.started || !net.myId) break;
+      if(m.roster) net.roster = sanitizeRoster(m.roster);
+      if(!net.roster.length) break;
+      net.started = true;
+      if(m.cfg && typeof m.cfg.scoreLimit === "number") cfg.scoreLimit = m.cfg.scoreLimit;
+      startMatch();
+      if(typeof m.matchTime === "number") matchTime = m.matchTime;
+      break;
+    case "snap": applySnap(m); break;
+    case "fire": {
+      const e = entityById(m.id);
+      if(e && !e.isPlayer) remoteFire(e, m);
+      break;
+    }
+    case "death": applyDeath(m); break;
+    case "reload": {
+      const e = entityById(m.id);
+      if(e && !e.isPlayer) playReload({x:e.x, y:1.4, z:e.z});
+      break;
+    }
+    case "leave":
+      removeRemoteEntity(m.id);
+      if(m.name) pushFeedItem(escapeHtml(String(m.name))+" ha lasciato la partita");
+      break;
+    case "end": {
+      const w = entityById(m.winnerId) || entities.slice().sort((a,b)=>b.score-a.score)[0];
+      endGame(w);
+      break;
+    }
+  }
+}
+
+function netSendFire(origin, dir, weapon){
+  const m = {t:"fire", ox:origin.x, oy:origin.y, oz:origin.z, dx:dir.x, dy:dir.y, dz:dir.z, weapon};
+  if(isHost()){ m.id = net.myId; broadcast(m); }
+  else netSend(m);
+}
+
+function maybeSendState(now){
+  if(now < net.nextState) return;
+  const p = getPlayer();
+  if(!p.alive) return;
+  net.nextState = now + STATE_INTERVAL;
+  netSend({t:"state", x:p.x, z:p.z, yaw, weapon:p.weapon});
+}
+
+function maybeBroadcastSnap(now){
+  if(now < net.nextSnap) return;
+  net.nextSnap = now + SNAP_INTERVAL;
+  const ents = entities.map(e=>({
+    id:e.id, x:+e.x.toFixed(2), z:+e.z.toFixed(2), yaw:+(e.isPlayer ? yaw : e.yaw).toFixed(3),
+    hp:Math.round(e.hp), alive:e.alive, score:+e.score.toFixed(2),
+    kills:e.kills, deaths:e.deaths, weapon:e.weapon
+  }));
+  broadcast({t:"snap", mt:+matchTime.toFixed(2), ents});
+}
+
+function pushSample(e, s){
+  if(!Number.isFinite(s.x) || !Number.isFinite(s.z) || !Number.isFinite(s.yaw)) return;
+  e.buf.push({time:performance.now(), x:s.x, z:s.z, yaw:s.yaw});
+  if(e.buf.length > 40) e.buf.shift();
+}
+
+function applySnap(m){
+  if(typeof m.mt === "number") matchTime = m.mt;
+  if(!Array.isArray(m.ents)) return;
+  for(const s of m.ents){
+    const e = entityById(s.id);
+    if(!e) continue;
+    if(typeof s.score === "number") e.score = s.score;
+    if(typeof s.kills === "number") e.kills = s.kills;
+    if(typeof s.deaths === "number") e.deaths = s.deaths;
+    if(e.isPlayer){
+      // l'entita locale non prende mai x/z dallo snapshot, solo alla rinascita
+      if(typeof s.hp === "number"){
+        if(e.alive && s.alive !== false && s.hp < e.hp) flashDamageVignette();
+        e.hp = s.hp;
+      }
+      if(s.alive === false && e.alive){
+        e.alive = false;
+        e.group.visible = false;
+        if(!e.respawnAt) e.respawnAt = performance.now()+3000;
+      } else if(s.alive === true && !e.alive){
+        respawnLocal(e, s.x, s.z);
+      }
+      continue;
+    }
+    const wk = validWeapon(s.weapon);
+    if(wk) e.weapon = wk;
+    if(typeof s.hp === "number") e.hp = s.hp;
+    if(s.alive === false && e.alive){
+      e.alive = false;
+      e.group.visible = false;
+      e.buf.length = 0;
+    } else if(s.alive === true && !e.alive){
+      e.alive = true;
+      e.deathAnnounced = false;
+      e.buf.length = 0;
+      if(Number.isFinite(s.x) && Number.isFinite(s.z)){ e.x = s.x; e.z = s.z; }
+      e.group.position.set(e.x, 0, e.z);
+      e.group.visible = true;
+    }
+    if(e.alive) pushSample(e, s);
+  }
+}
+
+function respawnLocal(e, x, z){
+  e.alive = true;
+  e.deathAnnounced = false;
+  e.hp = 100;
+  e.respawnAt = 0;
+  if(Number.isFinite(x) && Number.isFinite(z)){ e.x = x; e.z = z; }
+  e.weapons[e.weapon].ammo = WEAPONS[e.weapon].mag;
+  e.reloading = false;
+  e.group.visible = true;
+  e.group.position.set(e.x, 0, e.z);
+  camera.position.set(e.x, EYE_HEIGHT, e.z);
+}
+
+// idempotente: la morte puo arrivare prima o dopo lo snapshot che la contiene
+function applyDeath(m){
+  const victim = entityById(m.victim);
+  if(!victim || victim.deathAnnounced) return;
+  const killer = entityById(m.killer);
+  victim.deathAnnounced = true;
+  victim.alive = false;
+  victim.hp = 0;
+  victim.buf.length = 0;
+  victim.group.visible = false;
+  if(victim.isPlayer && !victim.respawnAt) victim.respawnAt = performance.now()+3000;
+  if(killer) pushKillfeed(killer, victim, !!m.head);
+  playDeath(victim.isPlayer ? null : {x:victim.x, y:1.2, z:victim.z});
+  if(hillController === victim.id) hillController = null;
+}
+
+function updateRemoteEntities(now){
+  const rt = now - INTERP_DELAY;
+  for(const e of entities){
+    if(!e.isRemote) continue;
+    const buf = e.buf;
+    while(buf.length >= 2 && buf[1].time <= rt) buf.shift();
+    while(buf.length >= 2 && now - buf[0].time > 1000) buf.shift();
+    if(buf.length === 0) continue;
+    const a = buf[0], b = buf.length > 1 ? buf[1] : buf[0];
+    const span = b.time - a.time;
+    const k = span > 0 ? Math.max(0, Math.min(1, (rt - a.time)/span)) : 0;
+    const x = a.x + (b.x-a.x)*k;
+    const z = a.z + (b.z-a.z)*k;
+    let dy = b.yaw - a.yaw;
+    while(dy > Math.PI) dy -= Math.PI*2;
+    while(dy < -Math.PI) dy += Math.PI*2;
+    const moved = Math.hypot(x-e.x, z-e.z);
+    e.x = x; e.z = z; e.yaw = a.yaw + dy*k;
+    e.group.position.set(e.x, 0, e.z);
+    e.group.rotation.y = e.yaw;
+    if(e.alive){
+      e.stepAcc = (e.stepAcc||0) + moved;
+      if(e.stepAcc > 2.6){ e.stepAcc = 0; playFootstep({x:e.x, y:0.2, z:e.z}); }
+    }
+  }
+}
+
+function remoteFire(e, m){
+  const key = validWeapon(m.weapon) || validWeapon(e.weapon) || "AK47";
+  if(!Number.isFinite(m.ox) || !Number.isFinite(m.oy) || !Number.isFinite(m.oz)) return;
+  const dir = new THREE.Vector3(m.dx, m.dy, m.dz);
+  if(!Number.isFinite(dir.lengthSq()) || dir.lengthSq() < 1e-8) return;
+  dir.normalize();
+  const origin = new THREE.Vector3(m.ox, m.oy, m.oz);
+  raycaster.set(origin, dir);
+  raycaster.near = 0.05;
+  raycaster.far = WEAPONS[key].range;
+  const hits = raycaster.intersectObjects(obstacleMeshes, false);
+  const end = hits.length ? hits[0].point.clone() : origin.clone().add(dir.clone().multiplyScalar(WEAPONS[key].range));
+  tracerLines.push({p1:origin.clone(), p2:end, life:0.06});
+  playShot(key, {x:e.x, y:1.5, z:e.z});
+  radarPings[e.id] = {x:e.x, z:e.z, until: performance.now()+1500};
+}
+
+function removeRemoteEntity(id){
+  const i = entities.findIndex(e=>e.id === id);
+  if(i < 0) return;
+  scene.remove(entities[i].group);
+  entities.splice(i,1);
+  delete radarPings[id];
+  if(hillController === id) hillController = null;
+}
+
+function closeNet(n){
+  if(n.conns) for(const c of n.conns){ try{ c.close(); }catch(e){} }
+  if(n.conn){ try{ n.conn.close(); }catch(e){} }
+  if(n.peer){ try{ n.peer.destroy(); }catch(e){} }
+}
+
+function netTeardown(){
+  if(!net) return;
+  const n = net;
+  net = null;
+  closeNet(n);
+  const active = document.querySelector("#scoreOpts .opt-btn.active");
+  if(active) cfg.scoreLimit = parseInt(active.getAttribute("data-score"), 10);
+}
+
+function hostLeftGameOver(){
+  netTeardown();
+  running = false;
+  stopHostInterval();
+  if(document.exitPointerLock) document.exitPointerLock();
+  document.getElementById("gameWrap").classList.add("hidden");
+  document.getElementById("lobbyScreen").classList.add("hidden");
+  const title = document.getElementById("goTitle");
+  title.textContent = "PARTITA TERMINATA";
+  title.className = "lose";
+  document.getElementById("finalStats").innerHTML = "L'host ha lasciato la partita.";
+  document.getElementById("gameOverScreen").classList.remove("hidden");
+}
+
+// ======================================================================
+// LOBBY
+// ======================================================================
+function showLobby(){
+  startError("");
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("gameOverScreen").classList.add("hidden");
+  document.getElementById("lobbyScreen").classList.remove("hidden");
+  document.getElementById("lobbyError").textContent = "";
+  document.getElementById("roomCode").textContent = net ? net.code : "----";
+  const host = isHost();
+  document.getElementById("lobbyStartBtn").classList.toggle("hidden", !host);
+  document.getElementById("lobbyWarn").classList.toggle("hidden", !host);
+  document.getElementById("lobbyWait").classList.toggle("hidden", host);
+  renderLobby();
+}
+
+function renderLobby(){
+  if(!net) return;
+  const roster = net.roster || [];
+  const list = document.getElementById("playerList");
+  list.innerHTML = "";
+  for(const r of roster){
+    const row = document.createElement("div");
+    row.className = "pl-row";
+    const col = "#"+BOT_COLORS[r.colorIdx % BOT_COLORS.length].toString(16).padStart(6,"0");
+    row.innerHTML = `<span class="pl-dot" style="background:${col}"></span><span>${escapeHtml(r.name)}</span>`
+      + (r.host ? `<span class="pl-tag">HOST</span>` : "");
+    list.appendChild(row);
+  }
+  document.getElementById("lobbyCount").textContent = "GIOCATORI "+roster.length+"/"+NET_MAX_PLAYERS;
+  if(isHost()) document.getElementById("lobbyStartBtn").disabled = roster.length < 2;
+}
 
 // ======================================================================
 // PLAYER HITBOX SYNC (invisible rig follows camera)
@@ -810,7 +1407,12 @@ let mouseLeftDown = false, adsActive = false;
 let locked = false;
 let hasLocked = false, menuOpen = false;
 
-function openMenu(){ menuOpen = true; paused = true; document.getElementById("pauseOverlay").classList.remove("hidden"); }
+function openMenu(){
+  menuOpen = true; paused = true;
+  // in multiplayer la simulazione continua: azzera gli input per non restare bloccati in movimento
+  if(net){ keys = {}; mouseLeftDown = false; adsActive = false; }
+  document.getElementById("pauseOverlay").classList.remove("hidden");
+}
 function closeMenu(){ menuOpen = false; paused = false; document.getElementById("pauseOverlay").classList.add("hidden"); }
 
 function requestLock(){
@@ -1109,6 +1711,8 @@ function updateRespawns(now){
       e.hp = 100; e.alive = true; e.respawnAt = 0;
       e.weapons[e.weapon].ammo = WEAPONS[e.weapon].mag;
       e.reloading = false;
+      e.deathAnnounced = false;
+      e.buf.length = 0;
       e.group.visible = true;
       e.group.position.set(e.x, 0, e.z);
     }
@@ -1205,39 +1809,67 @@ function syncHud(p){
 // ======================================================================
 // MAIN LOOP
 // ======================================================================
+let lastTick = 0;
+let hostTimer = null;
+
 function loop(){
   if(!running) return;
   requestAnimationFrame(loop);
-  const dt = Math.min(0.05, clock.getDelta());
   const now = performance.now();
+  const dt = Math.min(0.05, Math.max(0, (now - lastTick)/1000));
+  lastTick = now;
 
-  if(paused){
-    renderer.render(scene, camera);
-    syncHud(getPlayer());
-    return;
-  }
+  // in multiplayer il menu non congela la simulazione
+  if(!paused || net) tick(dt, now);
 
-  matchTime -= dt;
+  renderer.render(scene, camera);
+  syncHud(getPlayer());
+}
 
+function tick(dt, now){
   const p = getPlayer();
   updatePlayer(p, dt, now);
   updateAudioListener();
-  for(const e of entities) if(!e.isPlayer) updateBotAI(e, dt, now);
-  updateHill(dt);
-  updateRespawns(now);
+  if(net) updateRemoteEntities(now);
+  else for(const e of entities) if(!e.isPlayer) updateBotAI(e, dt, now);
+
+  if(isAuthority()){
+    matchTime -= dt;
+    updateHill(dt);
+    updateRespawns(now);
+    if(isHost()) maybeBroadcastSnap(now);
+  } else {
+    updateHill(0);
+    maybeSendState(now);
+  }
   updateTracers(dt);
 
-  renderer.render(scene, camera);
-  syncHud(p);
-
-  const winner = entities.find(e=>e.score >= cfg.scoreLimit);
-  if(winner || matchTime <= 0){
-    endGame(winner || entities.slice().sort((a,b)=>b.score-a.score)[0]);
+  if(isAuthority()){
+    const winner = entities.find(e=>e.score >= cfg.scoreLimit);
+    if(winner || matchTime <= 0){
+      const w = winner || entities.slice().sort((a,b)=>b.score-a.score)[0];
+      if(isHost()) broadcast({t:"end", winnerId:w.id});
+      endGame(w);
+    }
   }
 }
 
+// rAF viene rallentato nelle schede in secondo piano: l'host continua a simulare da qui
+function startHostInterval(){
+  stopHostInterval();
+  hostTimer = setInterval(()=>{
+    if(!running || !isHost() || !document.hidden) return;
+    const now = performance.now();
+    const dt = Math.min(0.05, Math.max(0, (now - lastTick)/1000));
+    lastTick = now;
+    tick(dt, now);
+  }, 50);
+}
+function stopHostInterval(){ if(hostTimer){ clearInterval(hostTimer); hostTimer = null; } }
+
 function endGame(winner){
   running = false;
+  stopHostInterval();
   if(document.exitPointerLock) document.exitPointerLock();
   const won = winner && winner.isPlayer;
   document.getElementById("gameWrap").classList.add("hidden");
@@ -1249,14 +1881,30 @@ function endGame(winner){
   let rows = sorted.map((e,i)=>`${i+1}. <b>${escapeHtml(e.name)}</b> — ${Math.floor(e.score)} pt · ${e.kills} uccisioni · ${e.deaths} morti`).join("<br>");
   document.getElementById("finalStats").innerHTML = rows;
   goScreen.classList.remove("hidden");
+  if(isHost()){
+    // lascia partire l'ultimo messaggio prima di chiudere le connessioni
+    const n = net;
+    n.over = true;
+    setTimeout(()=>{ if(net === n) netTeardown(); else closeNet(n); }, 400);
+  } else netTeardown();
 }
 
 // ======================================================================
 // START
 // ======================================================================
 let threeInited = false;
+
 function startGame(){
+  if(isHost()){
+    net.started = true;
+    broadcast({t:"start", cfg:{scoreLimit:cfg.scoreLimit}, roster:net.roster, matchTime:MATCH_SECONDS});
+  }
+  startMatch();
+}
+
+function startMatch(){
   document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("lobbyScreen").classList.add("hidden");
   document.getElementById("gameOverScreen").classList.add("hidden");
   document.getElementById("gameWrap").classList.remove("hidden");
 
@@ -1277,11 +1925,12 @@ function startGame(){
   document.getElementById("lockOverlay").classList.toggle("hidden", hasLocked);
   closeMenu();
   initAudio();
-  clock = new THREE.Clock();
+  lastTick = performance.now();
   running = true;
   paused = false;
   requestAnimationFrame(loop);
   requestLock();
+  if(isHost()) startHostInterval();
 }
 
 })();
